@@ -16,8 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from webtv import views
+
 urlpatterns = [
     path('control/', admin.site.urls),
     path('polls/', include('polls.urls'))
 ]
 
+handler400 = views.bad_request
+handler403 = views.permission_denied
+handler404 = views.page_not_found
+handler500 = views.error
