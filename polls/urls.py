@@ -18,4 +18,7 @@ urlpatterns = [
     path('<int:question_id>/vote/', views.vote, name='vote'),
     path('upload', views.upload_file, name='upload'),
     path('upload_success', views.upload_success, name='upload_success'),
+    path('csv', views.csv_view, name='csv_view'),
+    path('csv_big', views.csv_streaming_view, name='csv_streaming_view'),
+
 ]

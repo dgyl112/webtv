@@ -11,7 +11,8 @@ from .models import Question, Choice
 from .forms import UploadFileForm
 # 另外写一个处理上传过来的文件的方法，并在这里导入
 from .forms import handle_uploaded_file
-
+import csv
+from django.http import StreamingHttpResponse
 
 # def index(request):
 #     latest_question_list = Question.objects.order_by('-pub_date')[:5]
@@ -85,3 +86,37 @@ def upload_file(request):
 
 def upload_success(request):
     return render(request, 'polls/upload_success.html')
+
+
+def csv_view(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['First row', 'Foo', 'Bar', 'Baz'])
+    writer.writerow(['Second row', 'A', 'B', 'C', '"Testing"', "Here's a quote"])
+    return response
+
+
+class Echo(object):
+    """An object that implements just the write method of the file-like
+    interface.
+    """
+    def write(self, value):
+        """Write the value by returning it, instead of storing in a buffer."""
+        return value
+
+
+def csv_streaming_view(request):
+    """A view that streams a large CSV file."""
+    # Generate a sequence of rows. The range is based on the maximum number of
+    # rows that can be handled by a single sheet in most spreadsheet
+    # applications.
+    rows = (["Row {}".format(idx), str(idx)] for idx in range(65536))
+    pseudo_buffer = Echo()
+    writer = csv.writer(pseudo_buffer)
+    response = StreamingHttpResponse((writer.writerow(row) for row in rows),
+                                     content_type="text/csv")
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+    return response
