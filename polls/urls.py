@@ -20,5 +20,7 @@ urlpatterns = [
     path('upload_success', views.upload_success, name='upload_success'),
     path('csv', views.csv_view, name='csv_view'),
     path('csv_big', views.csv_streaming_view, name='csv_streaming_view'),
+    path('pdf_simple', views.pdf_simple_view, name='pdf_simple_view'),
+    path('pdf_complex', views.pdf_complex_view, name='pdf_complex_view'),
 
 ]
