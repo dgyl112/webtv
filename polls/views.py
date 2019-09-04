@@ -8,6 +8,9 @@ from django.urls import reverse
 from django.views import generic
 
 from .models import Question, Choice
+from .forms import UploadFileForm
+# 另外写一个处理上传过来的文件的方法，并在这里导入
+from .forms import handle_uploaded_file
 
 
 # def index(request):
@@ -67,3 +70,18 @@ class DetailView(generic.DetailView):
 class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
+
+
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)  # 注意获取数据的方式
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['file'])
+            return HttpResponseRedirect('upload_success')
+    else:
+        form = UploadFileForm()
+    return render(request, 'polls/upload.html', {'form': form})
+
+
+def upload_success(request):
+    return render(request, 'polls/upload_success.html')
